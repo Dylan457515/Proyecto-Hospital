@@ -147,7 +147,7 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
         </form> -->
         <!-- /.search form -->
         <!-- sidebar menu: : style can be found in sidebar.less -->
-         <br>
+        <br>
         <ul class="sidebar-menu" data-widget="tree">
           <li class="header">PANEL</li>
           <li class="active treeview">
@@ -297,6 +297,35 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
                       <div class="row">
                         <div class="col-lg-6">
                           <canvas id="StadisticasCitas" width="400" height="400"></canvas>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="box box-default box-solid">
+                            <div class="box-header with-border">
+                              <h3 class="box-title">Analisis citas</h3>
+                            </div>
+                            <!-- /.box-header -->
+                            <div class="box-body">
+                              <div class="col-lg-12">
+                                <label for="">Polinomio</label>
+                                <input type="text" id="formula" class="form-control" disabled>
+                                <br>
+                              </div>
+                              <div class="col-lg-6">
+                                <label for="">Busca la cita en tal dia</label>
+                                <input type="text" id="formula" class="form-control">
+                              </div>
+                              <div class="col-lg-3">
+                                <label for="">&nbsp;</label><br>
+                                <button class="btn btn-success" style="width: 100%;" onclick="EvaluarPolinomio()"><i class="glyphicon glyphicon-search"></i>Buscar</button><br><br>
+                              </div>
+                              <div class="col-lg-6">
+                                <label for="">Resultado</label>
+                                <input type="text" id="resultado_pol" class="form-control" disabled>
+                              </div>
+                            </div>
+                            <!-- /.box-body -->
+                          </div>
+                          <!-- /.box -->
                         </div>
                       </div>
                     </div>
@@ -655,7 +684,7 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
   <script src="../Plantilla/plugins/chartjs/Chart.bundle.min.js"></script>
   <script src="../Plantilla/plugins/chartjs/Chart.min.js"></script>
 
-  
+
 
 
 
@@ -669,63 +698,61 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
 
 
     function Cargar_Gafico_Citas() {
-        $.ajax({
-            url: "../controlador/inicio/controlador_grafica_citas.php",
-            type: "POST"
-        }).done(function(resp) {
-          if (resp.length > 0) {
-                var titulo = [];
-                var cantidad = [];
-                var colores = [];
-                var data = JSON.parse(resp);
-                for (var i = 0; i < data.length; i++) {
-                    titulo.push(data[i][1]);
-                    cantidad.push(data[i][0]);
-                    colores.push(colorRGB());
-                }
-                CrearGrafico(titulo, cantidad, colores, 'line', 'CANTIDAD DE CITAS AL DIA', 'StadisticasCitas');
-            }
+      $.ajax({
+        url: "../controlador/inicio/controlador_grafica_citas.php",
+        type: "POST"
+      }).done(function(resp) {
+        if (resp.length > 0) {
+          var titulo = [];
+          var cantidad = [];
+          var colores = [];
+          var data = JSON.parse(resp);
+          for (var i = 0; i < data.length; i++) {
+            titulo.push(data[i][1]);
+            cantidad.push(data[i][0]);
+            colores.push(colorRGB());
+          }
+          CrearGrafico(titulo, cantidad, colores, 'line', 'CANTIDAD DE CITAS AL DIA', 'StadisticasCitas');
+        }
 
-        })
+      })
     }
 
     function CrearGrafico(titulo, cantidad, colores, tipo, encabezado, id) {
-        var ctx = document.getElementById(id);
-        var myChart = new Chart(ctx, {
-            type: tipo,
-            data: {
-                labels: titulo,
-                datasets: [{
-                    label: encabezado,
-                    data: cantidad,
-                    backgroundColor: colores,
-                    borderColor: colores,
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-                }
-            }
-        });
+      var ctx = document.getElementById(id);
+      var myChart = new Chart(ctx, {
+        type: tipo,
+        data: {
+          labels: titulo,
+          datasets: [{
+            label: encabezado,
+            data: cantidad,
+            backgroundColor: colores,
+            borderColor: colores,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        }
+      });
     }
 
 
     function generarNumero(numero) {
-        return (Math.random() * numero).toFixed(0);
+      return (Math.random() * numero).toFixed(0);
     }
 
     function colorRGB() {
-        var coolor = "(" + generarNumero(255) + "," + generarNumero(255) + "," + generarNumero(255) + ")";
-        return "rgb" + coolor;
+      var coolor = "(" + generarNumero(255) + "," + generarNumero(255) + "," + generarNumero(255) + ")";
+      return "rgb" + coolor;
     }
-
-
   </script>
 
 </body>
