@@ -50,7 +50,7 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js">
+
 
 </head>
 
@@ -307,12 +307,12 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
                             <div class="box-body">
                               <div class="col-lg-12">
                                 <label for="">Polinomio</label>
-                                <input type="text" id="formula" class="form-control" disabled>
+                                <input type="text" id="polinomio" class="form-control">
                                 <br>
                               </div>
                               <div class="col-lg-6">
                                 <label for="">Busca la cita en tal dia</label>
-                                <input type="text" id="formula" class="form-control">
+                                <input type="text" id="buscar_cantidad_citas" class="form-control">
                               </div>
                               <div class="col-lg-3">
                                 <label for="">&nbsp;</label><br>
@@ -694,7 +694,19 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
     TraerDatosUsuario();
     Cargar_Gafico_Citas();
 
+    var fechaToTimestampCounter = 0; // Contador global para los timestamps
 
+    function fechaToTimestamp(fecha) {
+      fechaToTimestampCounter++; // Incrementar el contador global
+      return {
+        fecha: fecha,
+        numero: fechaToTimestampCounter
+      };
+    }
+
+
+
+    var titulosParaInterpolacion = []; // Array para almacenar números únicos por fecha
 
 
     function Cargar_Gafico_Citas() {
@@ -707,16 +719,37 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
           var cantidad = [];
           var colores = [];
           var data = JSON.parse(resp);
+
+
           for (var i = 0; i < data.length; i++) {
-            titulo.push(data[i][1]);
+            titulo.push(data[i][1]); // Mantener la fecha como string en titulo
             cantidad.push(data[i][0]);
             colores.push(colorRGB());
-          }
-          CrearGrafico(titulo, cantidad, colores, 'line', 'CANTIDAD DE CITAS AL DIA', 'StadisticasCitas');
-        }
 
-      })
+            // Convertir la fecha a un número único y agregar al array separado
+            var numeroUnico = fechaToTimestamp(data[i][1]).numero;
+            titulosParaInterpolacion.push(numeroUnico);
+          }
+
+          CrearGrafico(titulo, cantidad, colores, 'line', 'CANTIDAD DE CITAS AL DIA', 'StadisticasCitas');
+
+          // Enviar datos para la interpolación del polinomio
+          $.ajax({
+            url: "../controlador/interpolacion/interpolacion_generar_polinomio.php",
+            type: 'POST',
+            data: {
+              x: titulosParaInterpolacion,
+              fx: cantidad
+            }
+          }).done(function(resp) {
+            $("#polinomio").val(resp);
+          });
+        }
+      });
     }
+
+
+
 
     function CrearGrafico(titulo, cantidad, colores, tipo, encabezado, id) {
       var ctx = document.getElementById(id);
@@ -753,6 +786,63 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
       var coolor = "(" + generarNumero(255) + "," + generarNumero(255) + "," + generarNumero(255) + ")";
       return "rgb" + coolor;
     }
+
+
+
+
+    function EvaluarPolinomio() {
+    var Ndia = $("#buscar_cantidad_citas").val(); // Obtener el valor del input (puede ser un número o una fecha)
+    $.ajax({
+        url: "../controlador/inicio/controlador_grafica_citas.php",
+        type: "POST"
+      }).done(function(resp) {
+        if (resp.length > 0) {
+          var titulo = [];
+          var cantidad = [];
+          var colores = [];
+          var data = JSON.parse(resp);
+
+
+          for (var i = 0; i < data.length; i++) {
+            titulo.push(data[i][1]); // Mantener la fecha como string en titulo
+            cantidad.push(data[i][0]);
+            colores.push(colorRGB());
+
+          }
+
+          CrearGrafico(titulo, cantidad, colores, 'line', 'CANTIDAD DE CITAS AL DIA', 'StadisticasCitas');
+
+          // Enviar datos para la interpolación del polinomio
+          $.ajax({
+            url: "../controlador/interpolacion/interpolacion_generar_polinomio.php",
+            type: 'POST',
+            data: {
+              x: titulosParaInterpolacion,
+              fx: cantidad
+            }
+          }).done(function(resp) {
+            $("#polinomio").val(resp);
+
+
+            $.ajax({
+                    url: "../controlador/interpolacion/interpolacion_evalua_polinomio.php",
+                    type: 'POST',
+                    data: {
+                        polinomio: resp,
+                        x_evaluar: Ndia
+                    }
+                }).done(function(respEval) {
+                  $("#resultado_pol").val(respEval);
+                })
+
+            
+          });
+        }
+      });
+
+}
+
+    
   </script>
 
 </body>
