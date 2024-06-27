@@ -791,8 +791,8 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
 
 
     function EvaluarPolinomio() {
-    var Ndia = $("#buscar_cantidad_citas").val(); // Obtener el valor del input (puede ser un número o una fecha)
-    $.ajax({
+      var Ndia = $("#buscar_cantidad_citas").val(); // Obtener el valor del input (puede ser un número o una fecha)
+      $.ajax({
         url: "../controlador/inicio/controlador_grafica_citas.php",
         type: "POST"
       }).done(function(resp) {
@@ -825,24 +825,22 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
 
 
             $.ajax({
-                    url: "../controlador/interpolacion/interpolacion_evalua_polinomio.php",
-                    type: 'POST',
-                    data: {
-                        polinomio: resp,
-                        x_evaluar: Ndia
-                    }
-                }).done(function(respEval) {
-                  $("#resultado_pol").val(respEval);
-                })
+              url: "../controlador/interpolacion/interpolacion_evalua_polinomio.php",
+              type: 'POST',
+              data: {
+                polinomio: resp,
+                x_evaluar: Ndia
+              }
+            }).done(function(respEval) {
+              $("#resultado_pol").val(respEval);
+            })
 
-            
+
           });
         }
       });
 
-}
-
-    
+    }
   </script>
 
 </body>
