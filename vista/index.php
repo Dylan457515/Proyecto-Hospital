@@ -306,18 +306,19 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
                             <!-- /.box-header -->
                             <div class="box-body">
                               <div class="col-lg-12">
-                                <label for="">Polinomio</label>
-                                <input type="text" id="polinomio" class="form-control">
+                                <label for="">Funcion Polinomial</label>
+                                <input type="text" id="polinomio" class="form-control" disabled>
                                 <br>
                               </div>
                               <div class="col-lg-6">
                                 <label for="">Busca la cita en tal dia</label>
-                                <input type="text" id="buscar_cantidad_citas" class="form-control">
+                                <input type="text" id="buscar_cantidad_citas" class="form-control" onkeypress="return soloNumeros(event)">
                               </div>
                               <div class="col-lg-3">
                                 <label for="">&nbsp;</label><br>
                                 <button class="btn btn-success" style="width: 100%;" onclick="EvaluarPolinomio()"><i class="glyphicon glyphicon-search"></i>Buscar</button><br><br>
                               </div>
+
                               <div class="col-lg-6">
                                 <label for="">Resultado</label>
                                 <input type="text" id="resultado_pol" class="form-control" disabled>
@@ -810,7 +811,7 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
 
           }
 
-          CrearGrafico(titulo, cantidad, colores, 'line', 'CANTIDAD DE CITAS AL DIA', 'StadisticasCitas');
+          // CrearGrafico(titulo, cantidad, colores, 'line', 'CANTIDAD DE CITAS AL DIA', 'StadisticasCitas');
 
           // Enviar datos para la interpolación del polinomio
           $.ajax({

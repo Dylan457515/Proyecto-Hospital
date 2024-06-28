@@ -28,5 +28,5 @@ $resultado_evaluacion = evaluarPolinomio($polinomio, $x_evaluar);
 $resultado_formateado = number_format((float)$resultado_evaluacion, 2, '.', ',');
 
 // Devolver el resultado de la evaluación como respuesta
-echo $resultado_formateado; // Salida esperada: 3.00
+echo $resultado_formateado;
 ?>
