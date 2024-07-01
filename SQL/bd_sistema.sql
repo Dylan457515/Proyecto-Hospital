@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 25-06-2024 a las 00:22:29
+-- Tiempo de generación: 28-06-2024 a las 02:52:42
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -59,6 +59,16 @@ ELSE
 END IF;
 
 END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_DATOS_CITAS_DE_DOCTORES` (IN `FECHA` DATE)   SELECT
+	cita.medico_id, 
+	
+	COUNT(cita.cita_nroatencion)
+FROM
+	cita
+WHERE cita.cita_feregistro = FECHA
+	
+GROUP BY medico_id$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_EDITAR_CITA` (IN `IDCITA` INT, IN `IDPACIENTE` INT, IN `IDESPECIALIDAD` INT, IN `IDDOCTOR` INT, IN `DESCRIPCION` TEXT, IN `ESTATUS` VARCHAR(10))   UPDATE cita SET
 paciente_id = IDPACIENTE,
@@ -876,17 +886,17 @@ INSERT INTO `cita` (`cita_id`, `cita_nroatencion`, `cita_feregistro`, `medico_id
 (2, 1, '2024-06-11', 4, 1, 1, 'CANCELADA', 'vino por dolor en el vientre de su hijo', 1),
 (3, 2, '2024-06-11', 4, 1, 1, 'PENDIENTE', 'adwadwad', 1),
 (4, 3, '2024-06-11', 1, 4, 1, 'PENDIENTE', 'Cita a prye', 1),
-(5, 4, '2024-06-11', 2, 6, 1, 'PENDIENTE', 'prueba de imprimir', 1),
+(5, 4, '2024-06-14', 2, 6, 1, 'ATENDIDA', 'prueba de imprimir', 1),
 (6, 1, '2024-06-12', 1, 4, 1, 'PENDIENTE', 'sadwa', 1),
-(7, 1, '2024-06-12', 2, 6, 1, 'PENDIENTE', 'd', 1),
+(7, 1, '2024-06-12', 2, 6, 1, 'ATENDIDA', 'd', 1),
 (8, 1, '2024-06-12', 3, 5, 1, 'PENDIENTE', 'dia', 1),
-(9, 1, '2024-06-12', 4, 1, 1, 'PENDIENTE', 'noche', 1),
+(9, 1, '2024-06-12', 4, 1, 1, 'ATENDIDA', 'noche', 1),
 (10, 2, '2024-06-12', 4, 1, 1, 'PENDIENTE', 'jue', 1),
 (11, 3, '2024-06-12', 6, 1, 1, 'PENDIENTE', 'us', 1),
 (12, 2, '2024-06-12', 1, 3, 2, 'ATENDIDA', 'asdawdwa', 1),
 (13, 1, '2024-06-12', 1, 3, 2, 'PENDIENTE', 'sedfesf', 1),
 (14, 4, '2024-06-12', 4, 1, 1, 'PENDIENTE', 'asdwadgfdsfdsfafrdfsfeasdfesad', 1),
-(15, 5, '2024-06-12', 4, 1, 1, 'PENDIENTE', 'asdwadgfdsfdsfafrdfsfeasdfesadffdsdfsdfdfsfsddfsadsf', 1),
+(15, 5, '2024-06-12', 4, 1, 1, 'ATENDIDA', 'asdwadgfdsfdsfafrdfsfeasdfesadffdsdfsdfdfsfsddfsadsf', 1),
 (16, 1, '2024-06-14', 1, 3, 1, 'ATENDIDA', 'po 2', 1),
 (17, 1, '2024-06-14', 2, 6, 1, 'ATENDIDA', 'dolor de estomago y del pie', 11),
 (18, 1, '2024-06-17', 3, 5, 2, 'ATENDIDA', 'pihg', 1),
@@ -917,9 +927,11 @@ INSERT INTO `consulta` (`consulta_id`, `consulta_descripcion`, `consulta_diagnos
 (3, 'FGHTTGTRGVSST', 'ERVFFVDFVGG', '2024-06-14', 'ATENDIDA', 12),
 (4, 'medio muesrt', 'eutanacia', '2024-06-14', 'ATENDIDA', 16),
 (5, 'n', 'k', '2024-06-14', 'ATENDIDA', 17),
-(6, 'kbv', 'ñljñ', '2024-06-17', 'ATENDIDA', 18),
+(6, 'kbv', 'ñljñ', '2024-06-17', 'PENDIENTE', 18),
 (7, 'casi muerto', 'diabetes', '2024-06-19', 'ATENDIDA', 19),
-(8, 'Avanzado', 'Sufre sin dolor ', '2024-06-24', 'ATENDIDA', 20);
+(8, 'Avanzado', 'Sufre sin dolor ', '2024-06-24', 'ATENDIDA', 20),
+(9, 'gh', 'k', '2024-06-19', 'ATENDIDA', 4),
+(10, 'bv', 'g', '2024-06-25', 'PENDIENTE', 7);
 
 --
 -- Disparadores `consulta`
@@ -1343,7 +1355,7 @@ INSERT INTO `usuario` (`usu_id`, `usu_nombre`, `usu_contrasena`, `usu_sexo`, `ro
 (2, 'prueba', '$2y$10$VQ9QR7WiOAfPqvCj5VIxcO6.BVwf0nLPoP7limJd.iBz9hNIGpaR2', 'F', 2, 'ACTIVO', 'Charly3452@gmail.com', 0),
 (3, 'DylanQ', '$2y$10$XYYHBuKU8yjYGV7aLVf2POnNR59rTxyL5wC4uNozaMyO9/iXdmO8a', 'F', 3, 'ACTIVO', 'dylan.estudia.13@gmail.com', 0),
 (4, 'Dylan13', '$2y$10$0u.Ivfzefszq4mpvJoF89uRHsK7Y/VAb3KawiXUMV2SMJXfNKkrDK', 'M', 1, 'INACTIVO', 'Dylan313@gmail.com', 0),
-(5, 'Marcos', '$2y$10$IMDaAj3ca047xXEPR1en9Oaoj/2qyS7Zz5B7uieGQccBBcIjukF2q', 'M', 1, 'ACTIVO', 'ramosquibert@gmail.com', 0),
+(5, 'Marcos', '$2y$10$lCsJS4PO8DH7T93HbhSmreGmab0/rnYg8LunxFru67DeX1zQuB3pK', 'M', 1, 'ACTIVO', 'ramosquibert@gmail.com', 1),
 (6, 'Dylan45751', '$2y$10$vceGxkDDmCGwRMkrAtX87.gZ23XJLVVJXjTdnczFQMrvHL04R3tTi', 'M', 1, 'INACTIVO', 's@gmail.com', 0),
 (7, 'Das', '$2y$10$I4wtvygFdMLFXSuA7UxC2.bXH0z92Zre17W6ieYEjzFeI1dvM0BA6', 'F', 2, 'ACTIVO', 'seaf@gmail.com', 0),
 (8, 'Dylan5', '$2y$10$jFIxMa4qwCzBYRx1vQpxP.O7ysYGn6zDtbEZgP0xa0wrAz/FC2zUu', 'M', 1, 'ACTIVO', 'Dylan13@gmail.com', 0),
@@ -1480,7 +1492,7 @@ ALTER TABLE `cita`
 -- AUTO_INCREMENT de la tabla `consulta`
 --
 ALTER TABLE `consulta`
-  MODIFY `consulta_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `consulta_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_insumo`

@@ -750,8 +750,6 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
     }
 
 
-
-
     function CrearGrafico(titulo, cantidad, colores, tipo, encabezado, id) {
       var ctx = document.getElementById(id);
       var myChart = new Chart(ctx, {
@@ -777,7 +775,6 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
         }
       });
     }
-
 
     function generarNumero(numero) {
       return (Math.random() * numero).toFixed(0);
