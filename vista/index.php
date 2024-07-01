@@ -809,8 +809,6 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
           }
 
           // CrearGrafico(titulo, cantidad, colores, 'line', 'CANTIDAD DE CITAS AL DIA', 'StadisticasCitas');
-
-          // Enviar datos para la interpolación del polinomio
           $.ajax({
             url: "../controlador/interpolacion/interpolacion_generar_polinomio.php",
             type: 'POST',
@@ -820,8 +818,6 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
             }
           }).done(function(resp) {
             $("#polinomio").val(resp);
-
-
             $.ajax({
               url: "../controlador/interpolacion/interpolacion_evalua_polinomio.php",
               type: 'POST',
@@ -832,12 +828,9 @@ if (!isset($_SESSION['S_IDUSUARIO'])) {
             }).done(function(respEval) {
               $("#resultado_pol").val(respEval);
             })
-
-
           });
         }
       });
-
     }
   </script>
 
